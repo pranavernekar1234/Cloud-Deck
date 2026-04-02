@@ -10,6 +10,8 @@
     "lint": "eslint src --ext .js,.jsx"
   },
   "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "jsonwebtoken": "^9.0.3",
     "lucide-react": "^0.395.0",
     "mongoose": "^9.3.3",
     "react": "^18.3.1",
