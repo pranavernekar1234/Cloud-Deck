@@ -31,10 +31,9 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-userSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) return next();
+userSchema.pre('save', async function () {
+  if (!this.isModified('password')) return;
   this.password = await bcrypt.hash(this.password, 12);
-  next();
 });
 
 userSchema.methods.verifyPassword = function (candidate) {
@@ -73,12 +72,11 @@ const questionSchema = new mongoose.Schema(
 );
 
 // Auto-compute chooseTwo + correctCount from options
-questionSchema.pre('save', function (next) {
+questionSchema.pre('save', function () {
   if (this.options?.length) {
     this.correctCount = this.options.filter(o => o.correct).length;
     this.chooseTwo    = this.correctCount === 2;
   }
-  next();
 });
 
 // ─── ExamSet ──────────────────────────────────────────────────────────────────
