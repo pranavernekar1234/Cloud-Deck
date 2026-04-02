@@ -147,7 +147,7 @@ Your data is never stored on a single server.
 
 ---
 
-## `netlify.toml` Explained
+## `netlify.toml` Explained here
 
 ```toml
 [build]
