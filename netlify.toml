@@ -1,0 +1,58 @@
+# ─── CloudDeck — Netlify Configuration ───────────────────────────────────────
+# Serverless deployment: no servers to manage, global CDN edge distribution,
+# automatic replication across multiple availability zones via Netlify's network.
+
+[build]
+  command   = "npm run build"
+  publish   = "dist"
+  functions = "netlify/functions"
+
+[build.environment]
+  NODE_VERSION       = "20"
+  # Functions get their own node_modules install
+  AWS_LAMBDA_JS_RUNTIME = "nodejs20.x"
+
+# ─── Dev Server ───────────────────────────────────────────────────────────────
+[dev]
+  command   = "vite"
+  port      = 5173
+  targetPort = 5173
+  framework = "vite"
+
+# ─── SPA Fallback (React Router) ─────────────────────────────────────────────
+[[redirects]]
+  from   = "/api/*"
+  to     = "/.netlify/functions/api/:splat"
+  status = 200
+
+[[redirects]]
+  from   = "/*"
+  to     = "/index.html"
+  status = 200
+
+# ─── Security Headers ─────────────────────────────────────────────────────────
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options           = "DENY"
+    X-XSS-Protection          = "1; mode=block"
+    X-Content-Type-Options    = "nosniff"
+    Referrer-Policy           = "strict-origin-when-cross-origin"
+    Permissions-Policy        = "camera=(), microphone=(), geolocation=()"
+    Content-Security-Policy   = "default-src 'self'; script-src 'self' 'unsafe-inline' https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' /.netlify/"
+
+# Cache hashed assets forever; always revalidate HTML
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# ─── Environment Variables (set these in Netlify UI → Site Settings → Env) ───
+# MONGODB_URI  = mongodb+srv://user:pass@cluster.mongodb.net/clouddeck?retryWrites=true&w=majority
+# JWT_SECRET   = <run: node -e "require('crypto').randomBytes(64).toString('hex')" >
+# NODE_ENV     = production
